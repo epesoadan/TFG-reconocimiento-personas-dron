@@ -1,0 +1,61 @@
+/*So the header do not hide  */
+.sales {
+    display: block !important;
+}
+
+.header-area {
+     background: rgb(92, 6, 139)!important;
+}
+
+.footerarea-bar {
+    background: rgb(92, 6, 139)!important;
+}
+
+.masthead {
+    background: rgb(157, 106, 185)!important;
+}
+
+
+
+.divider-custom {
+    width: 100%;
+    height: 0.25rem;
+    background-color: #fff;
+    border-radius: 1rem;
+    border-color: #fff;
+    color: #fff;
+}
+
+.btn-secondary{
+    background: rgb(92, 6, 139)!important;
+    border-color: rgb(92, 6, 139);
+}
+
+.home-page-Results {
+    background: rgb(157, 106, 185)!important;
+}
+
+.custom-loader {
+    width:120px;
+    height:60px;
+    border-radius:200px 200px 0 0;
+    -webkit-mask:repeating-radial-gradient(farthest-side at bottom ,#0000 0,#000 1px 12%,#0000 calc(12% + 1px) 20%);
+    background:
+     radial-gradient(farthest-side at bottom,#600097 0 95%,#0000 0) bottom/0% 0% no-repeat
+     #A0A0A6;
+    animation:p10 2s infinite steps(6);
+}
+
+@keyframes p10 {
+      100% {background-size:120% 120%}
+}
+  
+#log-console {
+    width: 100%;
+    height: 90vh;
+    background-color: #000;
+    color: #0f0;
+    padding: 10px;
+    overflow-y: scroll;
+    font-family: monospace;
+}

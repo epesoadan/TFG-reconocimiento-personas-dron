@@ -1,0 +1,83 @@
+<!--<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dynamic Image Update</title>
+    <style>
+        /* Style to center the image on the page */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+   <h4>anbgvfcdfcyhvjbknl</h4>
+   <img id="dynamicImage" src="/getVideoFeed" alt="Dynamic Image" />
+    <script>
+        function refreshImage() {
+            document.getElementById('dynamicImage').src = "/getVideoFeed" + "?t=" + new Date().getTime();  // Append timestamp to avoid caching
+        }
+
+        // Refresh image every second
+        setInterval(refreshImage, 1000);
+    </script>
+</body>
+</html>-->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Video Streaming</title>
+</head>
+<body>
+    <h1>Video Streaming</h1>
+    <div id="videoContainer">
+        <img id="videoStream" src="" alt="Streaming de Cámara USB" style="max-width: 100%;">
+    </div>
+    <br>
+    <button onclick="startVideo()">Iniciar Video</button>
+    <button onclick="stopVideo()">Detener Video</button>
+
+    <script>
+      function startVideo() {
+        // Start the video feed
+        fetch('/startVideo')
+          .then(response => {
+            if (response.ok) {
+              // Set the src attribute to start the video feed
+              document.getElementById('videoStream').src = "/videoFeed";
+            } else {
+              alert("Error starting video feed");
+            }
+          })
+          .catch(error => {
+            console.error('Error:', error);
+          });
+        }
+
+        function stopVideo() {
+            // Stop the video feed
+            fetch('/stopVideo')
+              .then(response => {
+                if (response.ok) {
+                  // Clear the src attribute to stop the video feed
+                  document.getElementById('videoStream').src = "";
+                } else {
+                  alert("Error stopping video feed");
+                }
+              })
+              .catch(error => {
+                console.error('Error:', error);
+              });
+        }
+    </script>
+</body>
+</html>
