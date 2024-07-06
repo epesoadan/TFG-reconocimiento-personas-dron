@@ -1,0 +1,7 @@
+# Ignore virtual environments
+venv/
+env/
+flask-venv/
+
+# Ignore the directory with photos
+found_people_captures/
