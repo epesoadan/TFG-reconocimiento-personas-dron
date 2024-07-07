@@ -33,8 +33,8 @@ function loadImages() {
       .then(coordenadasData => {
 
         var coordenadas = coordenadasData.split('\n'); // Separates the lines in the file's text
-
-        for (var i = 0; i < JSON.parse(data).numero_archivos; i++) {
+  
+        for (var i = 0; i < JSON.parse(data).file_number; i++) {
           // Creates a container for the picture and its coordinates
           var imagenCoordenadasContainer = document.createElement("div");
           imagenCoordenadasContainer.className = "imagen-coordenadas-container";

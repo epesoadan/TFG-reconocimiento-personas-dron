@@ -13,11 +13,11 @@ def count_found_people_pictures():
    PICTURE_FOLDER_PATH = '/opt/flask-app/found_people_captures'
 
    program = f'ls {PICTURE_FOLDER_PATH} | wc -l'
-   archivos = os.popen(program).read()
+   files = os.popen(program).read()
 
    # Getting the number of pictures in the folder
    response_data = {
-      'numero_archivos': int(archivos)
+      'file_number': int(files)
    }
    response_json = json.dumps(response_data)
    return [response_json.encode('utf-8')]
