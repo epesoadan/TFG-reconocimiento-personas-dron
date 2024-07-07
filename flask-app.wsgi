@@ -12,6 +12,8 @@ os.environ['PATH'] = f"/opt/flask-app/flask-venv/bin:{os.environ['PATH']}"
 # Redefine sys.executable para asegurar que los scripts se ejecuten en el entorno virtual
 sys.executable = '/opt/flask-app/flask-venv/bin/python3.7'
 
+# Crea un log que muestra el contenido de las variables
+# para asegurar que tengan el valor correcto
 with open('/tmp/wsgi_debug.log', 'w') as f:
     f.write(f"sys.path: {sys.path}\n")
     f.write(f"VIRTUAL_ENV: {os.environ.get('VIRTUAL_ENV')}\n")

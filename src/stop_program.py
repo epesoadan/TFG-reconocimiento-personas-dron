@@ -7,7 +7,6 @@ def manage_process():
     Returns:
         A string indicating if the program was stopped correctly or not."""
 
-    LOG_FILE = '/opt/flask-app/logs/programlog.log'
     WWWDATA_PASSWORD = 'dr0neproject' # Change the password to the one you set for the user www-data
 
     program_to_stop = 'pgrep -f camera_detection.py'
