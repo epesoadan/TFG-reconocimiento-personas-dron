@@ -59,7 +59,7 @@ async def connect_to_drone(drone):
             logging.info("Drone found")
             break
 
-async def detect_people(drone):
+async def detect_people(drone, current_flight_mode):
     """Detects people in the camera's video feed and
     saves the image. It also calls the function
     "get_drone_coordinates" to get the coordinates
@@ -78,13 +78,13 @@ async def detect_people(drone):
                 output.Render(img)
                 # Getting the coordinates
                 start_time = time.time()
-                await get_drone_coordinates(drone)
+                await get_drone_coordinates(drone, current_flight_mode)
                 elapsed_time = time.time() - start_time
                 logging.info(f'Elapsed time: {elapsed_time} s')
     
     logging.debug("------------------------")
 
-async def get_drone_coordinates(drone):
+async def get_drone_coordinates(drone, current_flight_mode):
     """Makes the drone loiter in its current position
     and accesses the drone's GPS to get its current coordinates."""
 
@@ -112,43 +112,56 @@ async def get_drone_coordinates(drone):
 
     with open(COORDINATES_FILE_PATH, "a") as file:
         file.write(location_str + "\n")
-            
-    yaw_behavior = OrbitYawBehavior.HOLD_FRONT_TO_CIRCLE_CENTER
+    
+    # Starts orbiting around its current position
+    # if not in RTL mode.
+    if (current_flight_mode != FlightMode.RETURN_TO_LAUNCH):
+        yaw_behavior = OrbitYawBehavior.HOLD_FRONT_TO_CIRCLE_CENTER
 
 
-    logging.debug('Do orbit at 10m height from the ground')
-    await drone.action.do_orbit(radius_m=10,
-                                velocity_ms=2,
-                                yaw_behavior=yaw_behavior,
-                                latitude_deg=position.latitude_deg,
-                                longitude_deg=position.longitude_deg,
-                                absolute_altitude_m=orbit_height)
+        logging.debug('Do orbit at 10m height from the ground')
+        await drone.action.do_orbit(radius_m=10,
+                                    velocity_ms=2,
+                                    yaw_behavior=yaw_behavior,
+                                    latitude_deg=position.latitude_deg,
+                                    longitude_deg=position.longitude_deg,
+                                    absolute_altitude_m=orbit_height)
     return
 
-async def get_flight_mode(drone):
+async def get_flight_mode(drone, previous_mode):
     async for flight_mode in drone.telemetry.flight_mode():
+        logging.info(f"CURRENT MODE: {flight_mode}")
         return flight_mode
 
 async def main():
     drone = System()
-    await connect_to_drone(drone)
+    #previous_mode = "NONE"
+    #current_flight_mode = "NONE"
+    await connect_to_drone(drone, previous_mode)
 
     logging.info("Recognition program started")
     while True:
         try:
+            #previous_mode = current_flight_mode
             current_flight_mode = await get_flight_mode(drone)
             # If the drone is on AUTO mode (called MISSION in mavsdk),
             # it starts detecting people
-            if current_flight_mode == FlightMode.MISSION:
+            if (current_flight_mode == FlightMode.MISSION):
                 logging.debug("Drone is in AUTO mode, starting people detection.")
-                await detect_people(drone)
+                await detect_people(drone, current_flight_mode)
+            # If the drone is in RTL mode, it won't loiter
+            # when it detects a person
+            elif (current_flight_mode == FlightMode.RETURN_TO_LAUNCH):
+                logging.debug("Drone is in RTL mode, returning to launch.")
+                await detect_people(drone, current_flight_mode)
             # If the drone is in any other mode
             else:
-                logging.info(f"Drone is in {current_flight_mode} mode, waiting...")
+                logging.debug(f"Drone is in {current_flight_mode} mode, waiting...")
         except asyncio.TimeoutError:
             logging.error("Timeout while fetching flight mode.")
         except Exception as e:
             logging.error(f"Error in main: {type(e).__name__} - {str(e)}")
+            return
 
 if __name__ == "__main__":
     asyncio.run(main())

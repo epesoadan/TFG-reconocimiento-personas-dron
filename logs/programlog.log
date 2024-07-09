@@ -6,18 +6,35 @@ INFO:root:Output folder set
 INFO:root:Connecting with drone...
 INFO:root:Drone found
 INFO:root:Recognition program started
-INFO:root:Drone is in STABILIZED mode, waiting...
-INFO:root:Drone is in STABILIZED mode, waiting...
-INFO:root:Drone is in STABILIZED mode, waiting...
+INFO:root:Drone is in RTL mode, returning to launch.
+INFO:root:Drone is in RTL mode, returning to launch.
+INFO:root:Drone is in RTL mode, returning to launch.
+INFO:root:Drone is in RTL mode, returning to launch.
+INFO:root:Drone is in AUTO mode, starting people detection.
+INFO:root:Drone is in AUTO mode, starting people detection.
+INFO:root:Drone is in AUTO mode, starting people detection.
+INFO:root:Drone is in AUTO mode, starting people detection.
+INFO:root:Drone is in AUTO mode, starting people detection.
+INFO:root:Drone is in AUTO mode, starting people detection.
+INFO:root:Drone is in AUTO mode, starting people detection.
+INFO:root:Drone is in AUTO mode, starting people detection.
+INFO:root:Drone is in AUTO mode, starting people detection.
+INFO:root:Drone is in RTL mode, returning to launch.
+INFO:root:Drone is in RTL mode, returning to launch.
+INFO:root:Drone is in RTL mode, returning to launch.
 INFO:root:PERSON DETECTED
 INFO:root:Waiting for drone to have a global position estimate...
 INFO:root:-- ERROR: GPS couldn't be accessed
-INFO:root:Elapsed time: 1.2964115142822266 s
+INFO:root:Elapsed time: 0.5284738540649414 s
+INFO:root:Drone is in RTL mode, returning to launch.
 INFO:root:PERSON DETECTED
 INFO:root:Waiting for drone to have a global position estimate...
 INFO:root:-- ERROR: GPS couldn't be accessed
-INFO:root:Elapsed time: 0.44390034675598145 s
+INFO:root:Elapsed time: 0.4487276077270508 s
+INFO:root:Drone is in RTL mode, returning to launch.
 INFO:root:PERSON DETECTED
 INFO:root:Waiting for drone to have a global position estimate...
 INFO:root:-- ERROR: GPS couldn't be accessed
-INFO:root:Elapsed time: 0.45568394660949707 s
+INFO:root:Elapsed time: 0.4856581687927246 s
+INFO:root:Drone is in RTL mode, returning to launch.
+INFO:root:Drone is in RTL mode, returning to launch.

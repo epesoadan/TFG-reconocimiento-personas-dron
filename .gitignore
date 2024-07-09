@@ -5,3 +5,8 @@ flask-venv/
 
 # Ignore the directory with photos
 found_people_captures/
+
+# Ignore mavproxy files
+mav.parm
+mav.tlog
+mav.tlog.raw
