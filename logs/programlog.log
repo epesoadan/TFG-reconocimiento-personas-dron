@@ -3,8 +3,8 @@ INFO:root:Loading net...
 INFO:root:Net loaded successfully
 INFO:root:Camera accesed successfully
 INFO:root:Output folder set
-INFO:root:Connecting with drone...
 
+INFO:root:Connecting with drone...
 INFO:autopilot:ArduCopter V4.5.3 (ee14ff38)
 INFO:autopilot:ChibiOS: 6a85082c
 INFO:autopilot:Pixhawk1 0041003E 35365116 30383330
@@ -13,29 +13,24 @@ INFO:autopilot:RCOut: PWM:1-14
 INFO:autopilot:IMU0: fast sampling enabled 8.0kHz/1.0kHz
 INFO:autopilot:Frame: HEXA/X
 CRITICAL:autopilot:PreArm: AHRS: EK3 sources require GPS
-INFO:root:
-Drone found!
-INFO:root:Elapsed time: 41.89204978942871 s
+CRITICAL:autopilot:PreArm: AHRS: EK3 sources require GPS
+INFO:root:Drone found!
+
 INFO:root:Recognition program started
-INFO:root:CURRENT MODE: LOITER
-CRITICAL:autopilot:PreArm: AHRS: EK3 sources require GPS
-INFO:root:yay
-INFO:root:yay
-INFO:root:yay
-INFO:root:yay
-INFO:root:CURRENT MODE: LOITER
 INFO:root:CURRENT MODE: RTL
-INFO:root:yay
-INFO:root:yay
-INFO:root:yay
-INFO:root:yay
-INFO:root:yay
+INFO:root:PERSON DETECTED
+ERROR:root:The GPS is not working properly. Coordinates cannot be acquired.
+INFO:root:PERSON DETECTED
+ERROR:root:The GPS is not working properly. Coordinates cannot be acquired.
+INFO:root:PERSON DETECTED
+ERROR:root:The GPS is not working properly. Coordinates cannot be acquired.
+INFO:root:PERSON DETECTED
+ERROR:root:The GPS is not working properly. Coordinates cannot be acquired.
 INFO:root:CURRENT MODE: AUTO
-INFO:root:yay
-INFO:root:yay
-INFO:root:yay
-INFO:root:yay
-INFO:root:yay
+INFO:root:PERSON DETECTED
+ERROR:root:The GPS is not working properly. Coordinates cannot be acquired.
+INFO:root:PERSON DETECTED
+ERROR:root:The GPS is not working properly. Coordinates cannot be acquired.
+INFO:root:CURRENT MODE: CIRCLE
 CRITICAL:autopilot:PreArm: AHRS: EK3 sources require GPS
-INFO:root:yay
-INFO:root:yay
+INFO:root:CURRENT MODE: AUTO

@@ -16,7 +16,7 @@ COORDINATES_FILE_PATH = "/opt/flask-app/coordenadas.txt"
 LOG_FILE = '/opt/flask-app/logs/programlog.log'
 with open(LOG_FILE, 'w') as file:
     pass
-logging.basicConfig(filename=LOG_FILE, level=logging.DEBUG) # Switch "INFO" for "DEBUG" for more program information
+logging.basicConfig(filename=LOG_FILE, level=logging.INFO) # Switch "INFO" for "DEBUG" for more program information
 
 # Cleaning previous captures
 programa = f'rm {FOUND_PEOPLE_FOLDER_PATH}*'
@@ -50,10 +50,12 @@ def connect_to_drone():
     start_time = time.time()
     try:
         # Turn wait_ready to False for debugging
-        # (doesn't wait for the attributes to be ready, so it connects faster)
+        # (Doesn't wait for the attributes to be ready, so it connects faster.
+        # Might make the program pause later down the line if it tries to access an
+        # attribute that isn't ready yet.)
         drone = connect('udp:127.0.0.1:14550', baud=57600, wait_ready=True, timeout=50)
     except Exception as e:
-        logging.info("TIMEOUT ERROR: Couldn't connect with drone in 50 seconds.")
+        logging.error("TIMEOUT: Couldn't connect with drone in 50 seconds.")
         return
     elapsed_time = time.time() - start_time
 
@@ -62,17 +64,21 @@ def connect_to_drone():
         logging.info("Drone found!\n")
         logging.debug(f"Elapsed time: {elapsed_time} s")
     else:
-        logging.info("ERROR: Couldn't connect to drone, but no exception was caught.")
+        logging.error("Couldn't connect to drone, but no exception was caught.")
         return
     return drone
 
-#async def detect_people(drone, current_flight_mode):
-"""Detects people in the camera's video feed and
-saves the image. It also calls the function
-"get_drone_coordinates" to get the coordinates
-of the location where the person was found."""
+def detect_people(drone, current_flight_mode):
+    """Detects people in the camera's video feed and
+    saves the image. It also calls the function
+    "get_drone_coordinates" to get the coordinates
+    of the location where the person was found.
+    
+    Args:
+        drone: The variable representing the drone
+        current_flight_mode: The drone's current flight mode"""
 
-"""    img = camera.Capture()
+    img = camera.Capture()
     if img is None: # Capture timeout
         return
 
@@ -84,56 +90,51 @@ of the location where the person was found."""
                 # Rendering the image
                 output.Render(img)
                 # Getting the coordinates
-                start_time = time.time()
-                await get_drone_coordinates(drone, current_flight_mode)
-                elapsed_time = time.time() - start_time
-                logging.info(f'Elapsed time: {elapsed_time} s')
+                get_drone_coordinates(drone)
+                # Orbits in its current position, unless it's in RTL mode
+                if (current_flight_mode != "RTL"):
+                    orbit(drone)
     
-    logging.debug("------------------------")"""
+    logging.debug("------------------------")
+    return
 
-#async def get_drone_coordinates(drone, current_flight_mode):
-"""Makes the drone loiter in its current position
-and accesses the drone's GPS to get its current coordinates."""
-
-"""    logging.info("Waiting for drone to have a global position estimate...")
-    async for health in drone.telemetry.health():
-        if health.is_global_position_ok and health.is_home_position_ok:
-            logging.info("-- Global position estimate OK")
-            break
-        else:
-            logging.info("-- ERROR: GPS couldn't be accessed")
-            with open(COORDINATES_FILE_PATH, "a") as file:
-                file.write("No se pudo acceder al GPS\n")
-            return
+def get_drone_coordinates(drone):
+    """Makes the drone loiter in its current position
+    and accesses the drone's GPS to get its current coordinates.
+    Also makes it orbit around its current position.
     
+    Args:
+        drone: The variable that represents the drone"""
 
-    async for position in drone.telemetry.position():
-        orbit_height = position.absolute_altitude_m + 10
-        break
+    if (drone.gps_0.fix_type > 1): # If the GPS is working correctly
+        location = drone.location.global_frame
 
-    latitude = position.latitude_deg
-    longitude = position.longitude_deg
-    location_str = f"{latitude}, {longitude}"
+        latitude = location.lat
+        longitude = location.lon
+        location_str = f"{latitude}, {longitude}"
 
-    logging.info(f"Ubication: Latitude={latitude}, Longitude={longitude}")
+        logging.info(f"Ubication: Latitude={latitude}, Longitude={longitude}\n")
+        with open(COORDINATES_FILE_PATH, "a") as file:
+            file.write(location_str + "\n")
+    else:
+        logging.error("The GPS is not working properly. Coordinates cannot be acquired.\n")
+        with open(COORDINATES_FILE_PATH, "a") as file:
+            file.write("No se pudo acceder al GPS\n")
 
-    with open(COORDINATES_FILE_PATH, "a") as file:
-        file.write(location_str + "\n")
+    return
+
+def orbit(drone):
+    """Makes the drone orbit around its current position
+    in a radius of 10 meters.
     
-    # Starts orbiting around its current position
-    # if not in RTL mode.
-    if (current_flight_mode != FlightMode.RETURN_TO_LAUNCH):
-        yaw_behavior = OrbitYawBehavior.HOLD_FRONT_TO_CIRCLE_CENTER
+    Args:
+        drone: The variable that represents the drone"""
 
-
-        logging.info('Orbiting in a 10m radius from the ground')
-        await drone.action.do_orbit(radius_m=10,
-                                    velocity_ms=2,
-                                    yaw_behavior=yaw_behavior,
-                                    latitude_deg=position.latitude_deg,
-                                    longitude_deg=position.longitude_deg,
-                                    absolute_altitude_m=orbit_height)
-    return"""
+    drone.parameters['CIRCLE_RADIUS'] = 10
+    drone.parameters['CIRCLE_OPTIONS'] = 4 # Tells the drone to use its current position
+                                           # as the center of the circle 
+    drone.mode = VehicleMode("CIRCLE")
+    return
 
 def get_flight_mode(drone, previous_mode):
     """Returns the current flight mode.
@@ -165,17 +166,12 @@ def main():
         try:
             current_flight_mode = get_flight_mode(drone, current_flight_mode)
             # If the drone is on AUTO mode, it starts detecting people
-            # The same happens if it's in RTL mode, but it won't circle
-            # after detecting a person
+            # The same happens if it's in RTL mode, but it won't circle after detecting a person
             if (current_flight_mode == "AUTO" or current_flight_mode == "RTL"):
-                #detect_people(drone, current_flight_mode)
-                logging.debug("test")
-                time.sleep(1)
+                detect_people(drone, current_flight_mode)
             # If the drone is in any other mode, doesn't do anything
-        except asyncio.TimeoutError:
-            logging.error("Timeout while fetching flight mode.")
         except Exception as e:
-            logging.error(f"Error in main: {type(e).__name__} - {str(e)}")
+            logging.error(f"{type(e).__name__} - {str(e)}")
             return
 
 if __name__ == "__main__":
