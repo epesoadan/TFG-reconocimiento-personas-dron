@@ -130,33 +130,30 @@ async def get_drone_coordinates(drone, current_flight_mode):
 
 async def get_flight_mode(drone, previous_mode):
     async for flight_mode in drone.telemetry.flight_mode():
-        logging.info(f"CURRENT MODE: {flight_mode}")
+        if (previous_mode != flight_mode):
+            logging.info(f"CURRENT MODE: {flight_mode}")
         return flight_mode
 
 async def main():
     drone = System()
-    #previous_mode = "NONE"
-    #current_flight_mode = "NONE"
-    await connect_to_drone(drone, previous_mode)
+    previous_mode = "NONE"
+    current_flight_mode = "NONE"
+    await connect_to_drone(drone)
 
     logging.info("Recognition program started")
     while True:
         try:
-            #previous_mode = current_flight_mode
-            current_flight_mode = await get_flight_mode(drone)
+            previous_mode = current_flight_mode
+            current_flight_mode = await get_flight_mode(drone, previous_mode)
             # If the drone is on AUTO mode (called MISSION in mavsdk),
             # it starts detecting people
             if (current_flight_mode == FlightMode.MISSION):
-                logging.debug("Drone is in AUTO mode, starting people detection.")
                 await detect_people(drone, current_flight_mode)
             # If the drone is in RTL mode, it won't loiter
             # when it detects a person
             elif (current_flight_mode == FlightMode.RETURN_TO_LAUNCH):
-                logging.debug("Drone is in RTL mode, returning to launch.")
                 await detect_people(drone, current_flight_mode)
-            # If the drone is in any other mode
-            else:
-                logging.debug(f"Drone is in {current_flight_mode} mode, waiting...")
+            # If the drone is in any other mode, doesn't do anything
         except asyncio.TimeoutError:
             logging.error("Timeout while fetching flight mode.")
         except Exception as e:
