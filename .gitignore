@@ -10,3 +10,7 @@ found_people_captures/
 mav.parm
 mav.tlog
 mav.tlog.raw
+
+# Ignore logs and coordinates.txt
+coordenadas.txt
+logs/
