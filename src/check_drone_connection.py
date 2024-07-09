@@ -1,28 +1,32 @@
-import asyncio
-from mavsdk import System
+from dronekit import connect, VehicleMode
 
 import sys
+import time
 
-async def run():
+def run():
     """Checks if the drone controller is connected
     and recognised properly by the Jetson Nano."""
 
-    drone = System()
-
+    start_time = time.time()
     try:
-        await asyncio.wait_for(drone.connect(system_address='serial:///dev/ttyTHS1:57600'), timeout=5)
-    except asyncio.TimeoutError:
-        print("ERROR: No se pudo conectar al dron dentro del tiempo especificado")
+        # Turn wait_ready to False if you want it to connect to the drone
+        # without waiting for its attributes to be ready
+        drone = connect('/dev/ttyTHS1', baud=57600, wait_ready=True, timeout=50)
+    except Exception as e:
+        print(f"ERROR: {e}")
         return
+    elapsed_time = time.time() - start_time
 
+    if drone is not None:
+        print("¡Dron encontrado!")
+        print(f"Tiempo transcurrido: {elapsed_time} s")
+    else:
+        print("ERROR: No se pudo conectar al dron dentro del tiempo especificado")
 
-    async for state in drone.core.connection_state():
-        if state.is_connected:
-            print("¡Dron encontrado!")
-            break
+    drone.close()
+    return
 
     
 
 if __name__ == "__main__":
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(run())
+    run()
