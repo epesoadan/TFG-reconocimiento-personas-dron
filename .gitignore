@@ -11,6 +11,6 @@ mav.parm
 mav.tlog
 mav.tlog.raw
 
-# Ignore logs and coordinates.txt
+# Ignore logs and coordenadas.txt
 coordenadas.txt
 logs/
