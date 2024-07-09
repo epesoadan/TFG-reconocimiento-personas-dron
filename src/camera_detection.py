@@ -3,11 +3,9 @@ from jetson_utils import videoSource, videoOutput
 import sys
 import time
 import os
-import asyncio
 
-from mavsdk import System
-from mavsdk.telemetry import FlightMode
-from mavsdk.action import OrbitYawBehavior
+from dronekit import connect, VehicleMode, LocationGlobalRelative
+from pymavlink import mavutil
 
 import logging
 
@@ -18,7 +16,7 @@ COORDINATES_FILE_PATH = "/opt/flask-app/coordenadas.txt"
 LOG_FILE = '/opt/flask-app/logs/programlog.log'
 with open(LOG_FILE, 'w') as file:
     pass
-logging.basicConfig(filename=LOG_FILE, level=logging.INFO) # Switch "INFO" for "DEBUG" for more program information
+logging.basicConfig(filename=LOG_FILE, level=logging.DEBUG) # Switch "INFO" for "DEBUG" for more program information
 
 # Cleaning previous captures
 programa = f'rm {FOUND_PEOPLE_FOLDER_PATH}*'
@@ -38,34 +36,43 @@ logging.info("Camera accesed successfully")
 
 # Setting the output folder where the photos with people detected will go
 output = videoOutput(FOUND_PEOPLE_FOLDER_PATH)
-logging.info("Output folder set")
+logging.info("Output folder set\n")
 
-async def connect_to_drone(drone):
+def connect_to_drone():
     """Checks the connection with the drone.
+    It waits until all its attributes are ready.
     
-    Args:
-        drone: The variable that stores the drone's information."""
+    Returns:
+        A variable that represents the drone"""
 
     logging.info("Connecting with drone...")
 
+    start_time = time.time()
     try:
-        await asyncio.wait_for(drone.connect(system_address='udp://:14550'), timeout=5)
-    except asyncio.TimeoutError:
-        logging.info("TIMEOUT ERROR: Couldn't connect with drone in 5 seconds.")
+        # Turn wait_ready to False for debugging
+        # (doesn't wait for the attributes to be ready, so it connects faster)
+        drone = connect('udp:127.0.0.1:14550', baud=57600, wait_ready=True, timeout=50)
+    except Exception as e:
+        logging.info("TIMEOUT ERROR: Couldn't connect with drone in 50 seconds.")
         return
+    elapsed_time = time.time() - start_time
 
-    async for state in drone.core.connection_state():
-        if state.is_connected:
-            logging.info("Drone found")
-            break
 
-async def detect_people(drone, current_flight_mode):
-    """Detects people in the camera's video feed and
-    saves the image. It also calls the function
-    "get_drone_coordinates" to get the coordinates
-    of the location where the person was found."""
+    if drone is not None:
+        logging.info("Drone found!\n")
+        logging.debug(f"Elapsed time: {elapsed_time} s")
+    else:
+        logging.info("ERROR: Couldn't connect to drone, but no exception was caught.")
+        return
+    return drone
 
-    img = camera.Capture()
+#async def detect_people(drone, current_flight_mode):
+"""Detects people in the camera's video feed and
+saves the image. It also calls the function
+"get_drone_coordinates" to get the coordinates
+of the location where the person was found."""
+
+"""    img = camera.Capture()
     if img is None: # Capture timeout
         return
 
@@ -82,13 +89,13 @@ async def detect_people(drone, current_flight_mode):
                 elapsed_time = time.time() - start_time
                 logging.info(f'Elapsed time: {elapsed_time} s')
     
-    logging.debug("------------------------")
+    logging.debug("------------------------")"""
 
-async def get_drone_coordinates(drone, current_flight_mode):
-    """Makes the drone loiter in its current position
-    and accesses the drone's GPS to get its current coordinates."""
+#async def get_drone_coordinates(drone, current_flight_mode):
+"""Makes the drone loiter in its current position
+and accesses the drone's GPS to get its current coordinates."""
 
-    logging.info("Waiting for drone to have a global position estimate...")
+"""    logging.info("Waiting for drone to have a global position estimate...")
     async for health in drone.telemetry.health():
         if health.is_global_position_ok and health.is_home_position_ok:
             logging.info("-- Global position estimate OK")
@@ -126,33 +133,44 @@ async def get_drone_coordinates(drone, current_flight_mode):
                                     latitude_deg=position.latitude_deg,
                                     longitude_deg=position.longitude_deg,
                                     absolute_altitude_m=orbit_height)
-    return
+    return"""
 
-async def get_flight_mode(drone, previous_mode):
-    async for flight_mode in drone.telemetry.flight_mode():
-        if (previous_mode != flight_mode):
-            logging.info(f"CURRENT MODE: {flight_mode}")
-        return flight_mode
+def get_flight_mode(drone, previous_mode):
+    """Returns the current flight mode.
+    If the previous flight mode was different,
+    it writes a message on the log.
+    
+    Args:
+        drone: The variable that represents the drone
+        previous_mode: The previous flight mode
+        
+    Returns:
+        The current flight mode"""
 
-async def main():
-    drone = System()
-    previous_mode = "NONE"
+    if (previous_mode != drone.mode.name):
+        logging.info(f"CURRENT MODE: {drone.mode.name}")
+    return drone.mode.name
+
+def main():
+    """The main function of the program."""
+
     current_flight_mode = "NONE"
-    await connect_to_drone(drone)
+
+    drone = connect_to_drone()
+    if drone is None:
+        return
 
     logging.info("Recognition program started")
     while True:
         try:
-            previous_mode = current_flight_mode
-            current_flight_mode = await get_flight_mode(drone, previous_mode)
-            # If the drone is on AUTO mode (called MISSION in mavsdk),
-            # it starts detecting people
-            if (current_flight_mode == FlightMode.MISSION):
-                await detect_people(drone, current_flight_mode)
-            # If the drone is in RTL mode, it won't loiter
-            # when it detects a person
-            elif (current_flight_mode == FlightMode.RETURN_TO_LAUNCH):
-                await detect_people(drone, current_flight_mode)
+            current_flight_mode = get_flight_mode(drone, current_flight_mode)
+            # If the drone is on AUTO mode, it starts detecting people
+            # The same happens if it's in RTL mode, but it won't circle
+            # after detecting a person
+            if (current_flight_mode == "AUTO" or current_flight_mode == "RTL"):
+                #detect_people(drone, current_flight_mode)
+                logging.debug("test")
+                time.sleep(1)
             # If the drone is in any other mode, doesn't do anything
         except asyncio.TimeoutError:
             logging.error("Timeout while fetching flight mode.")
@@ -161,4 +179,4 @@ async def main():
             return
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()

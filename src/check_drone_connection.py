@@ -21,7 +21,7 @@ def run():
         print("¡Dron encontrado!")
         print(f"Tiempo transcurrido: {elapsed_time} s")
     else:
-        print("ERROR: No se pudo conectar al dron dentro del tiempo especificado")
+        print("ERROR: No se pudo conectar al dron dentro del tiempo especificado, pero no saltó ninguna excepción")
 
     drone.close()
     return
