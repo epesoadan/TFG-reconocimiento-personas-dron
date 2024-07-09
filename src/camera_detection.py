@@ -108,7 +108,7 @@ async def get_drone_coordinates(drone, current_flight_mode):
     longitude = position.longitude_deg
     location_str = f"{latitude}, {longitude}"
 
-    logging.debug(f"Ubicación: Latitud={latitude}, Longitud={longitude}")
+    logging.info(f"Ubication: Latitude={latitude}, Longitude={longitude}")
 
     with open(COORDINATES_FILE_PATH, "a") as file:
         file.write(location_str + "\n")
@@ -119,7 +119,7 @@ async def get_drone_coordinates(drone, current_flight_mode):
         yaw_behavior = OrbitYawBehavior.HOLD_FRONT_TO_CIRCLE_CENTER
 
 
-        logging.debug('Do orbit at 10m height from the ground')
+        logging.info('Orbiting in a 10m radius from the ground')
         await drone.action.do_orbit(radius_m=10,
                                     velocity_ms=2,
                                     yaw_behavior=yaw_behavior,
