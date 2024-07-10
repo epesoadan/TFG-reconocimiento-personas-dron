@@ -4,6 +4,8 @@ Eva Peso Adán (alu0101398037)
 
 Desarrollado como TFG en la Universidad de La Laguna, curso 2023-2024.
 
+Continuación del TFG "[Reconocimiento de imágenes por dron](https://github.com/Daniel-Arbelo/web-tfg-mod_wsgi/tree/main)" de Daniel Arbelo Hernández.
+
 ## Inicio
 
 Este proyecto está hecho para ser desplegado en una Jetson Nano. El modelo usado fue la Jetson Nano Developer Kit 2GB.
