@@ -1,5 +1,6 @@
 aiogrpc==1.8
 click==8.1.7
+dronekit==2.9.2
 Flask==2.2.5
 future==1.0.0
 grpcio==1.62.2
@@ -10,13 +11,16 @@ lxml==5.2.2
 MarkupSafe==2.1.5
 MAVProxy==1.8.70
 mavsdk==2.7.0
+monotonic==1.6
 numpy==1.21.6
 opencv-python==4.10.0.82
 pbr==6.0.0
 pkg_resources==0.0.0
 protobuf==3.20.1
+psutil==6.0.0
 pymavlink==2.4.41
 pyserial==3.5
+six==1.16.0
 testresources==2.0.1
 typing_extensions==4.7.1
 Werkzeug==2.2.3
