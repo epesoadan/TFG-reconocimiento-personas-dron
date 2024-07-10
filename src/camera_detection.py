@@ -23,6 +23,7 @@ programa = f'rm {FOUND_PEOPLE_FOLDER_PATH}*'
 os.popen(programa).read()
 with open(COORDINATES_FILE_PATH, 'w') as archivo:
     pass
+os.chdir(FOUND_PEOPLE_FOLDER_PATH)
 logging.info("Previous captures cleaned")
 
 # Loading the net that detects people
@@ -130,10 +131,28 @@ def orbit(drone):
     Args:
         drone: The variable that represents the drone"""
 
+    logging.info("The program will now take photos of the environment.\n\
+    Switch to AUTO mode to continue with the mission, or RTL to finish it.")
+
     drone.parameters['CIRCLE_RADIUS'] = 10
     drone.parameters['CIRCLE_OPTIONS'] = 4 # Tells the drone to use its current position
                                            # as the center of the circle 
     drone.mode = VehicleMode("CIRCLE")
+    return
+
+def take_photo(drone):
+    """Takes a photo and gets its current coordinates as well.
+    
+    Args:
+        drone: The variable that represents the drone"""
+
+    img = camera.Capture()
+    if img is None:
+        return
+    logging.info("Took photo of the environment")
+    detections = net.Detect(img)
+    output.Render(img)
+    get_drone_coordinates(drone)
     return
 
 def get_flight_mode(drone, previous_mode):
@@ -169,6 +188,11 @@ def main():
             # The same happens if it's in RTL mode, but it won't circle after detecting a person
             if (current_flight_mode == "AUTO" or current_flight_mode == "RTL"):
                 detect_people(drone, current_flight_mode)
+            # If the drone is on CIRCLE mode, it means it's orbiting around a person
+            # it found, so it starts taking photos every 3 seconds
+            elif (current_flight_mode == "CIRCLE"):
+                take_photo(drone)
+                time.sleep(3)
             # If the drone is in any other mode, doesn't do anything
         except Exception as e:
             logging.error(f"{type(e).__name__} - {str(e)}")

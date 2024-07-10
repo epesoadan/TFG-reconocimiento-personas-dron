@@ -3,14 +3,14 @@ venv/
 env/
 flask-venv/
 
-# Ignore the directory with photos
+# Ignore the directory with photos and logs
 found_people_captures/
+logs/
 
 # Ignore mavproxy files
 mav.parm
 mav.tlog
 mav.tlog.raw
 
-# Ignore logs and coordenadas.txt
+# Ignore coordenadas.txt
 coordenadas.txt
-logs/
