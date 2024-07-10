@@ -11,7 +11,7 @@ def run():
     try:
         # Turn wait_ready to False if you want it to connect to the drone
         # without waiting for its attributes to be ready
-        drone = connect('/dev/ttyTHS1', baud=57600, wait_ready=False, timeout=50)
+        drone = connect('/dev/ttyTHS1', baud=57600, wait_ready=False, timeout=5)
     except Exception as e:
         print(f"ERROR: {e}")
         return
