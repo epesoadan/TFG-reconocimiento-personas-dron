@@ -9,7 +9,7 @@ def run_execute_program():
     Returns:
         output: A string with the output message of the program."""
 
-    WWWDATA_PASSWORD = 'dr0neproject' # Change the password to the one you set for the user www-data
+    WWWDATA_PASSWORD = # WRITE THE PASSWORD YOU SET FOR THE USER WWW-DATA
     PYTHON_INTERPRETER = '/opt/flask-app/flask-venv/bin/python3.7'
     PROGRAM_ROUTE = '/opt/flask-app/src/camera_detection.py'
 

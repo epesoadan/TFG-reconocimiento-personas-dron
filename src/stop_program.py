@@ -7,7 +7,7 @@ def manage_process():
     Returns:
         A string indicating if the program was stopped correctly or not."""
 
-    WWWDATA_PASSWORD = 'dr0neproject' # Change the password to the one you set for the user www-data
+    WWWDATA_PASSWORD = # WRITE THE PASSWORD YOU SET FOR THE USER WWW-DATA
 
     program_to_stop = 'pgrep -f camera_detection.py'
     
