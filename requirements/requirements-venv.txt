@@ -12,7 +12,7 @@ MarkupSafe==2.1.5
 MAVProxy==1.8.70
 mavsdk==2.7.0
 monotonic==1.6
-numpy==1.21.6
+numpy==1.22.0
 opencv-python==4.10.0.82
 pbr==6.0.0
 pkg_resources==0.0.0
@@ -24,4 +24,4 @@ six==1.16.0
 testresources==2.0.1
 typing_extensions==4.7.1
 Werkzeug==3.0.6
-zipp==3.15.0
+zipp==3.19.1
