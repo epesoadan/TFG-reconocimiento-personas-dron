@@ -16,7 +16,7 @@ numpy==1.21.6
 opencv-python==4.10.0.82
 pbr==6.0.0
 pkg_resources==0.0.0
-protobuf==3.20.1
+protobuf==4.25.8
 psutil==6.0.0
 pymavlink==2.4.41
 pyserial==3.5
